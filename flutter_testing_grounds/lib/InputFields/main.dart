@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_testing_grounds/InputFields/pages/InputTest.dart';
+import 'package:flutter_testing_grounds/InputFields/pages/inputTest.dart';
 
 void main() {
   runApp(const MyApp());
