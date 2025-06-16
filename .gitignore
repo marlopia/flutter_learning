@@ -1,2 +1,3 @@
-musicapp/server/__pycache__/
+**/__pycache__/
 musicapp/server/venv/
+*.pyc

@@ -1,9 +1,9 @@
 import uuid
 import bcrypt
 from fastapi import Depends, HTTPException, APIRouter
-from musicapp.server.database import get_db
-from musicapp.server.models.user import User
-from musicapp.server.pydantic_schemas.user_create import UserCreate
+from database import get_db
+from models.user import User
+from pydantic_schemas.user_create import UserCreate
 from sqlalchemy.orm import Session
 
 router = APIRouter()
