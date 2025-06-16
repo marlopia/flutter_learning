@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_testing_grounds/shoppingApp/components/bottom_nav_bar.dart';
 import 'package:flutter_testing_grounds/shoppingApp/pages/cart_page.dart';
+import 'package:flutter_testing_grounds/shoppingApp/pages/intro_page.dart';
 import 'package:flutter_testing_grounds/shoppingApp/pages/logout_page.dart';
 import 'package:flutter_testing_grounds/shoppingApp/pages/shop_page.dart';
+import 'package:flutter_testing_grounds/shoppingApp/pages/about_page.dart'; // Asegúrate de tener esta página creada
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,24 +14,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  //selected navbar index
   int _selectedIndex = 0;
 
-  //navbar function
   void navigateBottomBar(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  //navbar pages
   final List<Widget> _pages = [
-    //shop
     const ShopPage(),
-    //cart
     const CartPage(),
-    //logout
     const LogoutPage(),
   ];
 
@@ -43,37 +38,54 @@ class _HomePageState extends State<HomePage> {
       body: _pages[_selectedIndex],
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            icon: Icon(Icons.menu),
-            color: Colors.black,
-            ),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+            icon: const Icon(Icons.menu, color: Colors.black),
+          ),
         ),
       ),
       drawer: Drawer(
         backgroundColor: Colors.grey[600],
         child: Column(
           children: [
-            //logo
             DrawerHeader(
-              child: Image.asset('lib/shoppingApp/images/logo.png', color: Colors.white,),
-              ),
-            //other pages
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: ListTile(
-                leading: Icon(Icons.home, color: Colors.white,),
-                title: Text("Home", style: TextStyle(color: Colors.white),),
+              child: Image.asset(
+                'lib/shoppingApp/images/logo.png',
+                color: Colors.white,
               ),
             ),
+
+            // HOME
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: ListTile(
-                leading: Icon(Icons.info, color: Colors.white,),
-                title: Text("About", style: TextStyle(color: Colors.white),),
+                leading: const Icon(Icons.home, color: Colors.white),
+                title: const Text("Home", style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const IntroPage()),
+                  );
+                },
+              ),
+            ),
+
+            // ABOUT
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: ListTile(
+                leading: const Icon(Icons.info, color: Colors.white),
+                title: const Text("About", style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AboutPage()),
+                  );
+                },
               ),
             ),
           ],

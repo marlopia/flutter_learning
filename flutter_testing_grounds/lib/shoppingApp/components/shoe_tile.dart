@@ -3,8 +3,8 @@ import 'package:flutter_testing_grounds/shoppingApp/models/shoe.dart';
 
 class ShoeTile extends StatelessWidget {
   final Shoe shoe;
-  void Function()? onTap;
-  ShoeTile({
+  final void Function()? onTap;
+   const ShoeTile({
     super.key, 
     required this.shoe,
     required this.onTap
