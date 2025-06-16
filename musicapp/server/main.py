@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Request
+# Run this to see debug output: uvicorn main:app --reload
+from fastapi import FastAPI
+from models.base import Base
+from routes import auth
+from database import engine
 
 app = FastAPI()
 
-@app.post('/')
-def test(request: Request):
-    print(request.body)
-    return 'hello world'
+app.include_router(auth.router, prefix= '/auth')
+
+Base.metadata.create_all(engine)
