@@ -10,5 +10,6 @@
     },
     "terminal.integrated.env.osx": {
         "PYTHONPATH": "${workspaceFolder}/server"
-    }
+    },
+    "dart.flutterSdkPath": "~/Flutter/flutter"
 }
