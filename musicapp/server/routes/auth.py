@@ -1,11 +1,17 @@
+import os
 import uuid
 import bcrypt
-from fastapi import Depends, HTTPException, APIRouter
+from fastapi import Depends, HTTPException, APIRouter, Header
+import jwt
 from database import get_db
 from models.user import User
 from pydantic_schemas.user_login import UserLogin
 from pydantic_schemas.user_create import UserCreate
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path='flutter_learning\musicapp\server\.env')
+password_key = os.getenv("JWT_PASSWORD")
 
 router = APIRouter()
 
@@ -40,4 +46,19 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     if not is_matched:
         raise HTTPException(400,'Password does not match!')
 
-    return user_db
+
+    token = jwt.encode({'id':user_db.id}, password_key)
+
+    return {'token': token, 'user': user_db}
+
+@router.get('/')
+def current_user_data(db: Session=Depends(get_db), x_auth_token=Header()):
+    # get the user token from the header
+    if not x_auth_token:
+        raise HTTPException(401, "No auth token provided!")
+    # decode the token
+    jwt.decode(x_auth_token, password_key)
+    # validate the token
+    # extract payload (ID) from token
+    # get user info from db
+    pass

@@ -21,9 +21,7 @@ class AuthRemoteRepository {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse(
-          '${ServerConstant.serverURL}/auth/signup',
-        ), //10.0.2.2 es el localhost del host del emulador android
+        Uri.parse('${ServerConstant.serverURL}/auth/signup'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"name": name, "email": email, "password": password}),
       );
@@ -59,7 +57,11 @@ class AuthRemoteRepository {
         return Left(AppFailure(resBodyMap['detail']));
       }
 
-      return Right(UserModel.fromMap(resBodyMap));
+      return Right(
+        UserModel.fromMap(
+          resBodyMap['user'],
+        ).copyWith(token: resBodyMap['token']),
+      );
     } on Exception catch (e) {
       return Left(AppFailure(e.toString()));
     }
