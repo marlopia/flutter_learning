@@ -1,7 +1,8 @@
 import os
 import uuid
 import bcrypt
-from fastapi import Depends, HTTPException, APIRouter, Header
+from fastapi import Depends, HTTPException, APIRouter
+from middleware.auth_middleware import auth_middleware
 import jwt
 from database import get_db
 from models.user import User
@@ -10,8 +11,11 @@ from pydantic_schemas.user_create import UserCreate
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path='flutter_learning\musicapp\server\.env')
-password_key = os.getenv("JWT_PASSWORD")
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
+
+password_key = os.getenv("PASSWORD_KEY")
+if not password_key:
+    raise ValueError("PASSWORD_KEY is not set in the .env file")
 
 router = APIRouter()
 
@@ -52,13 +56,11 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     return {'token': token, 'user': user_db}
 
 @router.get('/')
-def current_user_data(db: Session=Depends(get_db), x_auth_token=Header()):
-    # get the user token from the header
-    if not x_auth_token:
-        raise HTTPException(401, "No auth token provided!")
-    # decode the token
-    jwt.decode(x_auth_token, password_key)
-    # validate the token
-    # extract payload (ID) from token
-    # get user info from db
-    pass
+def current_user_data(db: Session=Depends(get_db), 
+                      user_dict = Depends(auth_middleware)):
+    user = db.query(User).filter(User.id == user_dict['uid']).first()
+
+    if not user:
+        raise HTTPException(404, 'User not found!')
+    
+    return user
