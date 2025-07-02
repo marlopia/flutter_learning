@@ -15,7 +15,10 @@ class AuthGradientButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Pallete.gradient1, Pallete.gradient2],
+          colors: [
+            Pallete.gradient1,
+            Pallete.gradient2,
+          ],
           begin: Alignment.bottomLeft,
           end: Alignment.topRight,
         ),
@@ -30,7 +33,10 @@ class AuthGradientButton extends StatelessWidget {
         ),
         child: Text(
           buttonText,
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

@@ -1,10 +1,9 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_local_repository.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AuthLocalRepository authLocalRepository(AuthLocalRepositoryRef ref) {
   return AuthLocalRepository();
 }

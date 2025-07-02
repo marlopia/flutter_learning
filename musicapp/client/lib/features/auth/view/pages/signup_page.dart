@@ -31,26 +31,37 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(authViewModelProvider)?.isLoading == true;
-    ref.listen(authViewModelProvider, (prev, next) {
-      next?.when(
-        data: (data) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-          );
-          showSnackBar(context, 'Account created successfully, please login.');
-        },
-        error: (error, st) {
-          showSnackBar(context, error.toString());
-        },
-        loading: () {},
-      );
-    });
+    final isLoading = ref
+        .watch(authViewModelProvider.select((val) => val?.isLoading == true));
+
+    ref.listen(
+      authViewModelProvider,
+      (_, next) {
+        next?.when(
+          data: (data) {
+            showSnackBar(
+              context,
+              'Account created successfully! Please  login.',
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginPage(),
+              ),
+            );
+          },
+          error: (error, st) {
+            showSnackBar(context, error.toString());
+          },
+          loading: () {},
+        );
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: isLoading
-          ? Loader()
+          ? const Loader()
           : Padding(
               padding: const EdgeInsets.all(15.0),
               child: Form(
@@ -66,9 +77,15 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    CustomField(hintText: 'Name', controller: nameController),
+                    CustomField(
+                      hintText: 'Name',
+                      controller: nameController,
+                    ),
                     const SizedBox(height: 15),
-                    CustomField(hintText: 'Email', controller: emailController),
+                    CustomField(
+                      hintText: 'Email',
+                      controller: emailController,
+                    ),
                     const SizedBox(height: 15),
                     CustomField(
                       hintText: 'Password',
@@ -77,7 +94,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                     ),
                     const SizedBox(height: 20),
                     AuthGradientButton(
-                      buttonText: 'Sign Up',
+                      buttonText: 'Sign up',
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
                           await ref
@@ -87,6 +104,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                 email: emailController.text,
                                 password: passwordController.text,
                               );
+                        } else {
+                          showSnackBar(context, 'Missing fields!');
                         }
                       },
                     ),
@@ -95,7 +114,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
                         );
                       },
                       child: RichText(
@@ -113,7 +134,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                           ],
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),

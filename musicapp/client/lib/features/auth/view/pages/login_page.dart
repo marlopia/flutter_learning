@@ -1,14 +1,13 @@
 import 'package:client/core/theme/app_pallete.dart';
 import 'package:client/core/utils.dart';
 import 'package:client/core/widgets/loader.dart';
-import 'package:client/features/auth/repositories/auth_remote_repository.dart';
 import 'package:client/features/auth/view/pages/signup_page.dart';
 import 'package:client/features/auth/view/widgets/auth_gradient_button.dart';
 import 'package:client/features/auth/view/widgets/custom_field.dart';
 import 'package:client/features/auth/viewmodel/auth_viewmodel.dart';
+import 'package:client/features/home/view/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart' as fpdart;
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -31,22 +30,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(authViewModelProvider)?.isLoading == true;
-    ref.listen(authViewModelProvider, (prev, next) {
-      next?.when(
-        data: (data) {
-          //TODO HOMEPAGE
-          //Navigator.push(
-          //  context,
-          //  MaterialPageRoute(builder: (context) => const LoginPage()),
-          //);
-        },
-        error: (error, st) {
-          showSnackBar(context, error.toString());
-        },
-        loading: () {},
-      );
-    });
+    final isLoading = ref
+        .watch(authViewModelProvider.select((val) => val?.isLoading == true));
+
+    ref.listen(
+      authViewModelProvider,
+      (_, next) {
+        next?.when(
+          data: (data) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+              (_) => false,
+            );
+          },
+          error: (error, st) {
+            showSnackBar(context, error.toString());
+          },
+          loading: () {},
+        );
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: isLoading
@@ -66,7 +73,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    CustomField(hintText: 'Email', controller: emailController),
+                    CustomField(
+                      hintText: 'Email',
+                      controller: emailController,
+                    ),
                     const SizedBox(height: 15),
                     CustomField(
                       hintText: 'Password',
@@ -75,17 +85,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(height: 20),
                     AuthGradientButton(
-                      buttonText: 'Sign In',
+                      buttonText: 'Sign in',
                       onTap: () async {
-                        final res = await AuthRemoteRepository().login(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
-                        final val = switch (res) {
-                          fpdart.Left(value: final l) => l,
-                          fpdart.Right(value: final r) => r.toString(),
-                        };
-                        print(val);
+                        if (formKey.currentState!.validate()) {
+                          await ref
+                              .read(authViewModelProvider.notifier)
+                              .loginUser(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                        } else {
+                          showSnackBar(context, 'Missing fields!');
+                        }
                       },
                     ),
                     const SizedBox(height: 20),
@@ -113,7 +124,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           ],
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
